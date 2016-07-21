@@ -7,10 +7,11 @@ Authors: Joel Burton, Christian Fernandez, Meggie Mahnken.
 """
 
 
-from flask import Flask, render_template, redirect, flash
+from flask import Flask, render_template, redirect, flash, session
 import jinja2
 
 import melons
+
 
 
 app = Flask(__name__)
@@ -50,7 +51,7 @@ def show_melon(melon_id):
     Show all info about a melon. Also, provide a button to buy that melon.
     """
 
-    melon = melons.get_by_id(59)
+    melon = melons.get_by_id(melon_id)
     print melon
     return render_template("melon_details.html",
                            display_melon=melon)
@@ -74,8 +75,8 @@ def shopping_cart():
     return render_template("cart.html")
 
 
-@app.route("/add_to_cart/<int:id>")
-def add_to_cart(id):
+@app.route("/add_to_cart/<int:melon_id>")
+def add_to_cart(melon_id):
     """Add a melon to cart and redirect to shopping cart page.
 
     When a melon is added to the cart, redirect browser to the shopping cart
@@ -87,8 +88,22 @@ def add_to_cart(id):
     # The logic here should be something like:
     #
     # - add the id of the melon they bought to the cart in the session
+    melon = melons.get_by_id(melon_id)
 
-    return "Oops! This needs to be implemented!"
+    # Check if the melon ID exists in the session. If it doesn't, add
+    # the ID as a key with a quantity of 0 as its value, and add 1. 
+    # Otherwise, add 1 to the quantity.
+
+    session.setdefault("cart", []).append(melon_id)
+
+    print "#########"
+    print melon
+    print "#########"
+    print session
+    print "#########"
+
+    flash("You have added {} to your cart.".format(melon.common_name))
+    return redirect('/melons')
 
 
 @app.route("/login", methods=["GET"])
