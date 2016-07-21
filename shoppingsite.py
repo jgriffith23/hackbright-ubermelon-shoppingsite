@@ -72,7 +72,7 @@ def shopping_cart():
     #   - keep track of the total amt of the entire order
     # - hand to the template the total order cost and the list of melon types
 
-    return render_template("cart.html")
+    return render_template("cart.html",)
 
 
 @app.route("/add_to_cart/<int:melon_id>")
